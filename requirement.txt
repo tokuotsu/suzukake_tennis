@@ -1,0 +1,6 @@
+line-bot-sdk
+chromedriver_binary==101.0.4951.41
+selenium
+requests 
+requests-oauthlib
+tweepy
