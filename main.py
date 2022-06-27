@@ -18,7 +18,7 @@ from selenium.webdriver.common.by import By
 def scraping():
     url = "https://portal.nap.gsic.titech.ac.jp/GetAccess/Login?Template=userpass_key&AUTHMETHOD=UserPassword"
     options = Options()
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)
     driver.get(url)
 
