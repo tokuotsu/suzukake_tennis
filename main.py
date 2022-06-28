@@ -68,4 +68,4 @@ if __name__=="__main__":
         today_str = today.strftime('%Y%m%d')
         print(today_str)
     # pass
-    # tweet("test2", [1,2,3])
+    tweet("test heroku", [1,2,3])

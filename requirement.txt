@@ -4,3 +4,4 @@ selenium
 requests 
 requests-oauthlib
 tweepy
+gunicorn
