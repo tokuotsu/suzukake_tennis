@@ -1,11 +1,25 @@
-from config import CONFIG
+import os
 import tweepy
 
-def tweet(text, contents):
+if os.path.exists("config.py"):
+    from config import CONFIG
     consumer_key = CONFIG["CONSUMER_KEY"]
     consumer_secret = CONFIG["CONSUMER_SECRET"]
     access_token = CONFIG["ACCESS_TOKEN"]
     access_token_secret = CONFIG["ACCESS_SECRET"]
+else:    
+    # from boto.s3.connection import S3Connection
+    # s3 = S3Connection(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'], os.environ['ACCESS_TOKEN'], os.environ['ACCESS_SECRET'])
+    consumer_key = os.environ["CONSUMER_KEY"]
+    consumer_secret = os.environ["CONSUMER_SECRET"]
+    access_token = os.environ["ACCESS_TOKEN"]
+    access_token_secret = os.environ["ACCESS_SECRET"]    
+
+def tweet(text, contents):
+    global consumer_key
+    global consumer_secret
+    global access_token
+    global access_token_secret
 
     client = tweepy.Client(
         consumer_key = consumer_key,

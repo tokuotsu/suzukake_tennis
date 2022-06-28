@@ -5,3 +5,4 @@ requests
 requests-oauthlib
 tweepy
 gunicorn
+boto3
