@@ -75,6 +75,14 @@ def scraping():
 
     time.sleep(10)
 
+def main():
+    now_jst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    print(now_jst.strftime('%H:%M'), "running main.py main()")
+
+def test():
+    now_jst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    tweet(f"test at {now_jst.strftime('%H:%M')}", [])
+
 if __name__=="__main__":
     # scraping()
     today = datetime.datetime.today()
