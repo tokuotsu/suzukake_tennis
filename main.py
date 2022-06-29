@@ -1,18 +1,18 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 import os
-from create_tweet import tweet
-
 import time
 import datetime
-
-# import chromedriver_binary
+from create_tweet import tweet
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
+# ローカルでは必要
+# import chromedriver_binary
 
 if os.path.exists("config.py"):
     from config import CONFIG
@@ -32,6 +32,7 @@ def scraping():
     global MATRIX
     url = "https://portal.nap.gsic.titech.ac.jp/GetAccess/Login?Template=userpass_key&AUTHMETHOD=UserPassword"
     options = Options()
+    # ブラウザ表示の有無
     options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)
     driver.get(url)
@@ -75,7 +76,7 @@ def scraping():
     time.sleep(10)
 
 if __name__=="__main__":
-    scraping()
+    # scraping()
     today = datetime.datetime.today()
     for i in range(7):
         today = today + datetime.timedelta(days=1)
@@ -83,6 +84,6 @@ if __name__=="__main__":
         print(today_str)
     # pass
     # tweet("test 4", ["1","2","3"])
-    tweet(f"test {(datetime.datetime.now()).strftime('%H:%M')}", [])
-    print((datetime.datetime.now()).strftime('%H:%M'))
+    # tweet(f"test {(datetime.datetime.now()).strftime('%H:%M')}", [])
+    print((datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))).strftime('%H:%M'))
     # print([outer.split(",") for outer in outers])
