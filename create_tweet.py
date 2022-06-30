@@ -44,8 +44,8 @@ def num2youbi(num):
     return youbi[num]
 
 def getJST():
-    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
-    return datetime.datetime.now()
+    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    # return datetime.datetime.now()
 
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
