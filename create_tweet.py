@@ -32,7 +32,8 @@ def tweet(text, contents):
     data, text, _, _ = client.create_tweet(text=text)
     id = data["id"]
     for i, content in enumerate(contents):
-        client.create_tweet(text=content, in_reply_to_tweet_id=id)
+        data, text, _, _, = client.create_tweet(text=content, in_reply_to_tweet_id=id)
+        id = data["id"]
         time.sleep(2)
 
 def num2youbi(num):
@@ -53,12 +54,12 @@ def make_body_day(search_date, now_date, dictionary, type_season):
         value = np.array(value)
         value = np.where(value==0, "×", "○")
         body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} |\n"
-    # body += f"\n{now_date} 現在"
+    body += f"\n({now_date})"
     return body
 
 def make_body_week(weekly_dict, is_fomer=True):
     now_date = getJST().strftime("%m/%d %H:%M:%S")  
-    body = f"1週間の予約状況\n数字は残り面数\n{'-'*12} | A | B | C \n"
+    body = f"1週間の予約状況\n数字は残り面数\n{'-'*12} | A | B | C |\n"
     for i, (key, value) in enumerate(weekly_dict.items()):
         if is_fomer:
             if i > 6:
