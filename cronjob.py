@@ -4,7 +4,7 @@ from create_tweet import tweet
 
 scheduler = BlockingScheduler()
 scheduler.add_job(main_former, 'cron', minute=0)
-scheduler.add_job(main_latter, 'cron', minute=30)
+# scheduler.add_job(main_latter, 'cron', minute=30)
 # scheduler.add_job(test, 'cron', hour=10)
 
 scheduler.start()
