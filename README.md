@@ -15,3 +15,10 @@
   * `https://github.com/heroku/heroku-buildpack-chromedriver.git`
 
 * schedular
+  ```bash
+  # ログ
+  heroku logs --tail
+  # bash
+  heroku run bash
+  # タイムゾーンの設定
+  heroku config:add TZ=Asia/Tokyo
