@@ -19,7 +19,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 # ローカルでは必要
-import chromedriver_binary
+# import chromedriver_binary
 
 if os.path.exists("config.py"):
     from config import CONFIG
