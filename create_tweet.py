@@ -50,7 +50,7 @@ def getJST():
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date = search_date.strftime("%m/%d") + f"（{num2youbi(search_date.strftime('%w'))}）"
-    body = f"{search_date} 予約状況\n{'-'*12} | A | B | C |\n"
+    body = f"{search_date} 予約状況\n{'-'*16} | A | B | C |\n"
     for key, value in dictionary.items():
         value = np.array(value)
         value = np.where(value==0, "×", "○")
