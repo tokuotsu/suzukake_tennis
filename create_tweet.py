@@ -33,7 +33,7 @@ def tweet(text, contents):
     id = data["id"]
     for i, content in enumerate(contents):
         data, text, _, _, = client.create_tweet(text=content, in_reply_to_tweet_id=id)
-        id = data["id"]
+        # id = data["id"]
         time.sleep(2)
 
 def num2youbi(num):
