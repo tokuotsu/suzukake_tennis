@@ -59,9 +59,13 @@ def make_body_day(search_date, now_date, dictionary, type_season):
     body += f"\n({now_date})"
     return body
 
-def make_body_week(weekly_dict):
-    now_date = getJST().strftime("%m/%d %H:%M:%S")  
-    body = f"1週間の予約状況\n数字は残り面数\n{'-'*12} | A | B | C | \n"
+def make_body_week(weekly_dict, is_difference):
+    now_date = getJST().strftime("%m/%d %H:%M")  
+    if is_difference:
+        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+    else:
+        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+
     for i, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
         sum_list = list(map(int, value.sum(axis=0)))
@@ -71,8 +75,12 @@ def make_body_week(weekly_dict):
             else:
                 sum_list[i] = str(sum_li)
         body += f"{key} | {' | '.join(sum_list)} | \n"
-    body += f"\n{now_date} 現在"
-    print(body, "in make_body_week")
+    # body += f"\n{now_date} 現在"
+    if is_difference:
+        body += "\n※*は変更分"
+    else:
+        body += "\n※数字は残り面数"
+    print(body)
     return body
 
 def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former):

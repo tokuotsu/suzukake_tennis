@@ -43,7 +43,8 @@ def scraping(is_former=True, is_difference=False):
     url = "https://portal.nap.gsic.titech.ac.jp/GetAccess/Login?Template=userpass_key&AUTHMETHOD=UserPassword"
     options = Options()
     # ブラウザ表示の有無
-    # options.add_argument('--headless')
+    if not is_debug:
+        options.add_argument('--headless')
     driver = webdriver.Chrome(options=options)
     driver.get(url)
 
@@ -129,7 +130,7 @@ def scraping(is_former=True, is_difference=False):
                 save_list.append(list(map(int, value)))
         text = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
-        print(text)
+        # print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
         if is_former:
@@ -164,19 +165,36 @@ def scraping(is_former=True, is_difference=False):
         return weekly_dict, bodies_list
 
 def main_difference():
-    weekly_dict, _, bodies_list = scraping(is_former=True, is_difference=True)
-    head_body = make_body_week(weekly_dict)
-    tweet(head_body, bodies_list)
+    try:
+        weekly_dict, _, bodies_list = scraping(is_former=True, is_difference=True)
+        head_body = make_body_week(weekly_dict, is_difference=True)
+        tweet(head_body, bodies_list)
+    except(Exception) as e:
+        print(e)
+
+def main_difference_later():
+    try:
+        weekly_dict, _, bodies_list = scraping(is_former=False, is_difference=True)
+        head_body = make_body_week(weekly_dict, is_difference=True)
+        tweet(head_body, bodies_list)
+    except(Exception) as e:
+        print(e)
 
 def main_former():
-    weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
-    head_body = make_body_week(weekly_dict)
-    tweet(head_body, bodies_list)
+    try:
+        weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
+        head_body = make_body_week(weekly_dict, is_difference=False)
+        tweet(head_body, bodies_list)
+    except(Exception) as e:
+        print(e)
 
 def main_latter():
-    weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
-    head_body = make_body_week(weekly_dict)
-    tweet(head_body, bodies_list)
+    try:
+        weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
+        head_body = make_body_week(weekly_dict, is_difference=False)
+        tweet(head_body, bodies_list)
+    except(Exception) as e:
+        print(e)
 
 def test():
     now_jst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))

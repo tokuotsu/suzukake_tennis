@@ -1,12 +1,13 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from main import main_difference, main_former, main_latter
+from main import main_difference, main_former, main_latter, main_difference_later
 from create_tweet import tweet
 
 scheduler = BlockingScheduler()
-# 9-21時→0-12
-scheduler.add_job(main_former, 'cron', hour="0-14", minute=0)
-scheduler.add_job(main_latter, 'cron', hour="0-14", minute=30)
-scheduler.add_job(main_difference, 'interval', minutes=15)
+# 9-21時→0-12時
+scheduler.add_job(main_former, 'cron', hour="8,6", minute="45")
+scheduler.add_job(main_latter, 'cron', hour="1,7", minute="0")
+scheduler.add_job(main_difference, 'interval', minutes=30)
+scheduler.add_job(main_difference_later, 'interval', minutes=30)
 
 # scheduler.add_job(main_latter, 'cron', minute=30)
 # scheduler.add_job(test, 'cron', hour=10)
