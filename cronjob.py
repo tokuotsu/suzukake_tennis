@@ -11,10 +11,12 @@ scheduler.add_job(main_latter, 'cron', hour="10,18", minute="0")
 # 更新
 # 下段はメンテンナンス中
 scheduler.add_job(main_difference, 'cron', minute="10, 40", day_of_week="mon, wed, thu, sat, sun")
-scheduler.add_job(main_difference, 'cron', hour="9-3", minute="10, 40", day_of_week="tue, fri")
+scheduler.add_job(main_difference, 'cron', hour="1-3", minute="10, 40", day_of_week="tue, fri")
+scheduler.add_job(main_difference, 'cron', hour="9-23", minute="10, 40", day_of_week="tue, fri")
 
 scheduler.add_job(main_difference_later, 'cron', minute="25, 55", day_of_week="mon, wed, thu, sat, sun")
-scheduler.add_job(main_difference_later, 'cron', hour="9-3", minute="25, 55", day_of_week="tue, fri")
+scheduler.add_job(main_difference_later, 'cron', hour="1-3", minute="25, 55", day_of_week="tue, fri")
+scheduler.add_job(main_difference_later, 'cron', hour="9-23", minute="25, 55", day_of_week="tue, fri")
 
 # scheduler.add_job(main_latter, 'cron', minute=30)
 # scheduler.add_job(test, 'cron', hour=10)
