@@ -204,7 +204,7 @@ def test():
 
 if __name__=="__main__":
     # scraping()
-    main_former()
+    main_difference()
     # main_latter()
     exit()
     today = datetime.datetime.today()
