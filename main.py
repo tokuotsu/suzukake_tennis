@@ -114,6 +114,8 @@ def scraping(is_former=True, is_difference=False):
             else: # 冬
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
+            # Bコートの予約が取れない場合
+            # df.iloc[1, :]="str"
             if season == "夏時間":
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
@@ -137,10 +139,10 @@ def scraping(is_former=True, is_difference=False):
             if i == 6:
                 break
     
-    # is_difference = False
+    # 変更分を参照する処理
     if is_difference:
-        # 
         weekly_dict_mask = copy.deepcopy(weekly_dict)
+        # 過去データの読み込み
         if is_former:
             if not os.path.exists("./zenkai_former.txt"):
                 zenkai_dict = weekly_dict
