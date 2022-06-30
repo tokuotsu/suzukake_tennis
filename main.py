@@ -97,7 +97,7 @@ def scraping():
         html = table.get_attribute("outerHTML")
         # print(html)
         df = pd.read_html(html)[0]
-        df.to_csv(f"./tmp/tmp_{i}.csv")
+        # df.to_csv(f"./tmp/tmp_{i}.csv")
         _, season, daytype, = str(df["施設.2"][0]).split("：")
         key_season = ""
         if daytype == "平日":
