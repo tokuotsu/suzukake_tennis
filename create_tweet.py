@@ -1,5 +1,6 @@
 import os
 import time
+import pickle
 import datetime
 import tweepy
 import numpy as np
@@ -50,30 +51,67 @@ def getJST():
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date = search_date.strftime("%m/%d") + f"（{num2youbi(search_date.strftime('%w'))}）"
-    body = f"{search_date} 予約状況\n{'-'*16} | A | B | C |\n"
+    body = f"{search_date} 予約状況\n{'-'*16} | A | B | C | \n"
     for key, value in dictionary.items():
         value = np.array(value)
         value = np.where(value==0, "×", "○")
-        body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} |\n"
+        body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} | \n"
     body += f"\n({now_date})"
     return body
 
-def make_body_week(weekly_dict, is_fomer=True):
+def make_body_week(weekly_dict):
     now_date = getJST().strftime("%m/%d %H:%M:%S")  
-    body = f"1週間の予約状況\n数字は残り面数\n{'-'*12} | A | B | C |\n"
-    for i, (key, value) in enumerate(weekly_dict.items()):
-        if is_fomer:
-            if i > 6:
-                continue
-        else:
-            if i < 7:
-                continue        
+    body = f"1週間の予約状況\n数字は残り面数\n{'-'*12} | A | B | C | \n"
+    for i, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
-        body += f"{key} | {' | '.join(list(map(str, map(int, value.sum(axis=0)))))} |\n"
+        sum_list = list(map(int, value.sum(axis=0)))
+        for i, sum_li in enumerate(sum_list):
+            if sum_li >=10:
+                sum_list[i] = str(sum_li%10) + "*"
+            else:
+                sum_list[i] = str(sum_li)
+        body += f"{key} | {' | '.join(sum_list)} | \n"
     body += f"\n{now_date} 現在"
-    print(body)
+    print(body, "in make_body_week")
     return body
-    # pass
+
+def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former):
+    flag = True
+    for key, value in weekly_dict.items():
+        if key not in zenkai_dict.keys():
+            flag = False
+            return weekly_dict, bodies_list
+        zenkai_value = zenkai_dict[key]
+        if value!=zenkai_value:
+            flag = False
+            break
+    if flag:
+        print("no difference")
+        exit()
+    else:
+        new_bodies_list = []
+        for (key, value), body in zip(weekly_dict.items(), bodies_list):
+            zenkai_value = np.array(zenkai_dict[key])
+            value = np.array(value)
+            tflist = value==zenkai_value
+            new_value = np.where(tflist, value, value+10)
+            weekly_dict_mask[key] = new_value
+
+            body_list = [bod.split(' | ') for bod in body.split("\n")]
+            for i, body in enumerate(body_list):
+                for j, bo in enumerate(body):
+                    if bo == "×" or bo == "○":
+                        if not tflist[i-2][j-1]:
+                            body_list[i][j]+="*"
+            new_bodies_list.append("\n".join([" | ".join(body) for body in body_list]))
+        if is_former:
+            with open("./zenkai_former.txt", "wb") as f:
+                pickle.dump(weekly_dict, f)
+        else:
+            with open("./zenkai_latter.txt", "wb") as f:
+                pickle.dump(weekly_dict, f)
+
+    return weekly_dict_mask, new_bodies_list
 
 if __name__=="__main__":
     a = getJST()

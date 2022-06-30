@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+import copy
 import pickle
 import datetime
 import numpy as np
 import pandas as pd
 from collections import defaultdict
-
 from property import DISPLAY_NAME
 from create_tweet import *
 
@@ -18,8 +18,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
+is_debug = False
+
 # ローカルでは必要
-# import chromedriver_binary
+if is_debug:
+    import chromedriver_binary
 
 if os.path.exists("config.py"):
     from config import CONFIG
@@ -33,7 +36,7 @@ else:
     outers = MATRIX.split("|")
     MATRIX = [outer.split(",") for outer in outers]
 
-def scraping():
+def scraping(is_former=True, is_difference=False):
     global STUDENT_ID
     global PASSWORD
     global MATRIX
@@ -87,6 +90,9 @@ def scraping():
     bodies_list = []
     for i in range(14):
         # today = datetime.datetime.today()
+        if not is_former:
+            if i < 7:
+                continue
         today = getJST()
         search_date = today + datetime.timedelta(days=i)
         search_date_str = search_date.strftime('%Y%m%d')
@@ -123,36 +129,63 @@ def scraping():
                 save_list.append(list(map(int, value)))
         text = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
-        # print(text)
+        print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
-        # break
-    # if not os.path.exists("./zenkai.txt"):
-    #     dic_zenkai = weekly_dict
-    #     with open("./zenkai.txt", "wb") as f:
-    #         pickle.dump(dic_zenkai, f)
-    # else:
-    #     with open("./zenkai.txt", "rb") as f:
-    #         dic_zenkai = pickle.load(f)
+        if is_former:
+            if i == 6:
+                break
+    
+    # is_difference = False
+    if is_difference:
+        # 
+        weekly_dict_mask = copy.deepcopy(weekly_dict)
+        if is_former:
+            if not os.path.exists("./zenkai_former.txt"):
+                zenkai_dict = weekly_dict
+                with open("./zenkai_former.txt", "wb") as f:
+                    pickle.dump(zenkai_dict, f)
+            else:
+                with open("./zenkai_former.txt", "rb") as f:
+                    zenkai_dict = pickle.load(f)
+        else:
+            if not os.path.exists("./zenkai_latter.txt"):
+                zenkai_dict = weekly_dict
+                with open("./zenkai_latter.txt", "wb") as f:
+                    pickle.dump(zenkai_dict, f)
+            else:
+                with open("./zenkai_latter.txt", "rb") as f:
+                    zenkai_dict = pickle.load(f)
 
-    return weekly_dict, bodies_list
+        weekly_dict_mask, bodies_list = detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former)
+
+        return weekly_dict_mask, bodies_list
+    else:
+        return weekly_dict, bodies_list
+
+def main_difference():
+    weekly_dict, _, bodies_list = scraping(is_former=True, is_difference=True)
+    head_body = make_body_week(weekly_dict)
+    tweet(head_body, bodies_list)
 
 def main_former():
-    weekly_dict, bodies_list = scraping()
-    head_body = make_body_week(weekly_dict, is_fomer=True)
-    tweet(head_body, bodies_list[:7])
+    weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
+    head_body = make_body_week(weekly_dict)
+    tweet(head_body, bodies_list)
 
 def main_latter():
-    weekly_dict, bodies_list = scraping()
-    head_body = make_body_week(weekly_dict, is_fomer=False)
-    tweet(head_body, bodies_list[7:])
+    weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
+    head_body = make_body_week(weekly_dict)
+    tweet(head_body, bodies_list)
 
 def test():
     now_jst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
     tweet(f"test at {now_jst.strftime('%H:%M')}", [])
 
 if __name__=="__main__":
-    scraping()
+    # scraping()
+    main_former()
+    # main_latter()
     exit()
     today = datetime.datetime.today()
     for i in range(7):
