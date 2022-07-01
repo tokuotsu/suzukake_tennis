@@ -53,9 +53,9 @@
   
 * デバッグ・デプロイ
 
-  デバッグ時は、main.pyの`is_debag==True`で、呟かずにプリントだけできる。
+  デバッグ時は、main.pyの`is_debag=True`で、呟かずにプリントだけできる。
 
-  デプロイ時は、ローカルで`main_difference_former()`と`main_difference_latter()`を実行して`zenkai_former.txt`と`zenkai_latter.txt`を作成してから、必ず`is_debag==False`にしてデプロイする。
+  デプロイ時は、ローカルで`main_difference_former()`と`main_difference_latter()`を実行して`zenkai_former.txt`と`zenkai_latter.txt`を作成してから、必ず`is_debag=False`にしてデプロイする。
 
   面倒な場合は、最大1時間変更分を呟かないが、`zenkai_former.txt`と`zenkai_latter.txt`なしでデプロイする。
 

@@ -93,6 +93,7 @@ def make_body_week(weekly_dict, is_difference, is_former):
         body += f"{key} | {' | '.join(sum_list)} | \n"
     # body += f"\n{now_date} 現在"
     if getJST().hour < 17 and (not is_former):
+        print(body)
         return body
     else:
         if is_difference:
@@ -115,7 +116,7 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             else:
                 with open("./zenkai_latter.txt", "wb") as f:
                     pickle.dump(weekly_dict, f)
-            print(f"{getJST()}:\nnew date, data saved only")
+            print(f"New date, data saved only")
             return "end", "end"
             # return weekly_dict, bodies_list
         zenkai_value = zenkai_dict[key]
@@ -124,7 +125,7 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             break
     # 変化が無かった場合
     if flag:
-        print(f"{getJST()}:\nThere is no difference")
+        print(f"There is no difference")
         return "end", "end"
     else:
         new_bodies_list = []

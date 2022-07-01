@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 # -*- coding: utf-8 -*-
 import os
+import sys
 import time
 import copy
 import pickle
@@ -23,6 +24,7 @@ is_debug = False
 
 if is_debug:
     print("デバッグ開始")
+    print("デバッグ中にid_debug = Falseに変更")
 else:
     print("デプロイ環境！")
 
@@ -204,60 +206,73 @@ def scraping(is_former=True, is_difference=False):
 
 # 違いツイート前半分
 def main_difference_former():
-    #try:
-    weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
-    if weekly_dict == "end":
-        return
-    else:
-        head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
-    
-    if is_debug:
-        print(head_body, "\n\n", bodies_list)
-    else:
-        tweet(head_body, bodies_list)
-    #except(Exception) as e:
-     #   print(e)
+    print(f"\n{getJST()}")
+    print(f"{sys._getframe().f_code.co_name} Starting...")
+    try:
+        weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
+        if weekly_dict == "end":
+            print("Finished!")
+            return
+        else:
+            head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
+        
+        if is_debug:
+            print(head_body, "\n\n", bodies_list)
+        else:
+            tweet(head_body, bodies_list)
+        print("Finished!")
+    except(Exception) as e:
+       print(e)
 
 # 違いツイート後半分
 def main_difference_latter():
-    # try:
-    weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
-    if weekly_dict == "end":
-        return
-    else:
-        head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
-    
-    if is_debug:
-        print(head_body, "\n\n", bodies_list)
-    else:
-        tweet(head_body, bodies_list)
-    #except(Exception) as e:
-     #   print(e)
+    print(f"\n{getJST()}")
+    print(f"{sys._getframe().f_code.co_name} Starting...")
+    try:
+        weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
+        if weekly_dict == "end":
+            print("Finished!")
+            return
+        else:
+            head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
+        
+        if is_debug:
+            print(head_body, "\n\n", bodies_list)
+        else:
+            tweet(head_body, bodies_list)
+        print("Finished!")
+    except(Exception) as e:
+       print(e)
 
 # 定期ツイート前半分
 def main_former():
+    print(f"\n{getJST()}")
+    print(f"{sys._getframe().f_code.co_name} Starting...")
     try:
         weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
         print(weekly_dict==True)
         if weekly_dict == "end":
-            # print("here 1")
+            print("Finished!")
             return
         else:
-            # print("here")
             head_body = make_body_week(weekly_dict, is_difference=False, is_former=True)
         
         if is_debug:
             print(head_body, "\n\n", bodies_list)
         else:
             tweet(head_body, bodies_list)
+        print("Finished!")
     except(Exception) as e:
         print(e)
 
 # 定期ツイート後半分
 def main_latter():
+    print(f"\n{getJST()}")
+    print(f"{sys._getframe().f_code.co_name} Starting...")
     try:
         weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
         if weekly_dict == "end":
+            print("Finished!")
             return
         else:
             head_body = make_body_week(weekly_dict, is_difference=False, is_former=False)
@@ -266,6 +281,7 @@ def main_latter():
             print(head_body, "\n\n", bodies_list)
         else:
             tweet(head_body, bodies_list)
+        print("Finished!")
     except(Exception) as e:
         print(e)
 
