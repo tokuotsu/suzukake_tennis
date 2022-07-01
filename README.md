@@ -8,6 +8,7 @@
   ```bash
   MATRIX="X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X|X,X,X,X,X,X,X,X,X,X"
   ```
+  
 * heroku上のBuildpacksは以下を追加
 
   * `heroku/python`
@@ -24,6 +25,32 @@
   heroku config:add TZ=Asia/Tokyo
   ```
 
+* 定期実行
+
+  以下のような`python`ファイルを用意
+
+  ```python
+  # cronjob.py
+  
+  from apscheduler.schedulers.blocking import BlockingScheduler
+  
+  scheduler = BlockingScheduler(timezone="Asia/Tokyo")
+  scheduler.add_job(main_former, 'cron', minute="0")
+  
+  scheduler.start()
+  ```
+  
+  ```bash
+  # Procfile
+  clock: python cronjob.py
+  ```
+  
+  ```bash
+  heroku ps:scale clock=1
+  ```
+  
+  
+  
 * デバッグ・デプロイ
 
   デバッグ時は、main.pyの`is_debag==True`で、呟かずにプリントだけできる。
