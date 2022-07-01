@@ -112,27 +112,34 @@ def scraping(is_former=True, is_difference=False):
         key_season = ""
         if daytype == "平日":
             df = df.drop(columns=["12:15 -", "17:00 -"], index=3)
+            a = np.where(np.array(df.isna()), 1, 0)
             if season == "夏時間":
                 key_season = "summer_weekday"
             else: # 冬
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
-            # Bコートの予約が取れない場合
-            # df.iloc[1, :]="str"
             if season == "夏時間":
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
             else: # 冬
                 df = df.drop(columns=["16:00 -"], index=3)
                 key_season = "winter_holiday"
+            # Bコートの予約が取れないため            
+            a = np.where(np.array(df.isna()), 1, 0)
+            df_str = df.copy()
+            df_str.iloc[1,:]="teacher_only"
+            a = np.where(np.array(df_str)=="teacher_only", a+100, a)
         
         new_dict = defaultdict(list)
         save_list = []
-        for value, name in zip(np.array(df.isna().T), df):
+        for value, name in zip(a.T, df):
             if ":" in name:
                 # 1 -> 予約なし、0 -> 予約あり
-                new_dict[name] = list(map(int, value))
-                save_list.append(list(map(int, value)))
+                tmp = list(map(int, value))
+                # tmp[1] = 100
+                new_dict[name] = tmp
+                save_list.append(tmp)
+        # print(save_list)
         text = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
         # print(text)
@@ -240,8 +247,11 @@ if __name__=="__main__":
     # scraping()
     # main_former()
     # main_latter()
-    main_difference()
-    main_difference_later()
+    # main_difference()
+    # exit()
+    if is_debug:
+        main_difference()
+        main_difference_later()
     # main_latter()
     exit()
     today = datetime.datetime.today()

@@ -76,10 +76,12 @@ def make_body_week(weekly_dict, is_difference):
         sum_list = list(map(int, value.sum(axis=0)))
         # 変更があったものについては、*をつける
         for i, sum_li in enumerate(sum_list):
-            if sum_li >=10:
+            if sum_li%100 >= 10:
                 sum_list[i] = str(sum_li%10) + "*"
             else:
-                sum_list[i] = str(sum_li)
+                sum_list[i] = str(sum_li%100)
+            if sum_li >= 100:
+                sum_list[i] = f"({sum_list[i]})"
         body += f"{key} | {' | '.join(sum_list)} | \n"
     # body += f"\n{now_date} 現在"
     if is_difference:
