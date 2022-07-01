@@ -52,6 +52,7 @@ def scraping(is_former=True, is_difference=False):
     # ブラウザ表示の有無
     if not is_debug:
         options.add_argument('--headless')
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
     driver.get(url)
 
@@ -299,14 +300,3 @@ if __name__=="__main__":
         main_difference_former()
         main_difference_latter()
     # main_latter()
-    exit()
-    today = datetime.datetime.today()
-    for i in range(7):
-        today = today + datetime.timedelta(days=1)
-        today_str = today.strftime('%Y%m%d')
-        print(today_str)
-    # pass
-    # tweet("test 4", ["1","2","3"])
-    # tweet(f"test {(datetime.datetime.now()).strftime('%H:%M')}", [])
-    print((datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))).strftime('%H:%M'))
-    # print([outer.split(",") for outer in outers])
