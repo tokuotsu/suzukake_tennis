@@ -37,6 +37,7 @@ def tweet(text, contents):
         # ツリーにする
         id = data["id"]
         time.sleep(2)
+    print("tweeted")
 
 def num2youbi(num):
     if type(num) == str:
@@ -46,6 +47,7 @@ def num2youbi(num):
 
 def getJST():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=1)
     # return datetime.datetime.now()
 
 # ツリーにつなげる詳細ツイートの作成
@@ -100,7 +102,8 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             else:
                 with open("./zenkai_latter.txt", "wb") as f:
                     pickle.dump(weekly_dict, f)
-            exit()
+            # exit()
+            return "end", "end"
             # return weekly_dict, bodies_list
         zenkai_value = zenkai_dict[key]
         if value!=zenkai_value:
@@ -108,8 +111,9 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             break
     # 変化が無かった場合
     if flag:
-        print("no difference")
-        exit()
+        print(f"{getJST()}:\nThere is no difference")
+        return "end", "end"
+        # exit()
     else:
         new_bodies_list = []
         for (key, value), body in zip(weekly_dict.items(), bodies_list):

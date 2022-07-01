@@ -91,10 +91,13 @@ def scraping(is_former=True, is_difference=False):
     bodies_list = []
     for i in range(14):
         # today = datetime.datetime.today()
+        today = getJST()
         if not is_former:
             if i < 7:
                 continue
-        today = getJST()
+        else:
+            if today.hour >= 17 and i==0:
+                continue
         search_date = today + datetime.timedelta(days=i)
         search_date_str = search_date.strftime('%Y%m%d')
         url = f"https://kyomu2.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx?date={search_date_str}&bs=5&nofilter=1&m=d"
@@ -132,7 +135,7 @@ def scraping(is_former=True, is_difference=False):
                 save_list.append(list(map(int, value)))
         text = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
-        # print(text)
+        print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
         if is_former:
@@ -169,32 +172,63 @@ def scraping(is_former=True, is_difference=False):
 def main_difference():
     #try:
     weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
-    head_body = make_body_week(weekly_dict, is_difference=True)
-    tweet(head_body, bodies_list)
+    if weekly_dict == "end":
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=True)
+    
+    if is_debug:
+        print(head_body, "\n\n", bodies_list)
+    else:
+        tweet(head_body, bodies_list)
     #except(Exception) as e:
      #   print(e)
 
 def main_difference_later():
-    
+    # try:
     weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
-    head_body = make_body_week(weekly_dict, is_difference=True)
-    tweet(head_body, bodies_list)
+    if weekly_dict == "end":
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=True)
+    
+    if is_debug:
+        print(head_body, "\n\n", bodies_list)
+    else:
+        tweet(head_body, bodies_list)
     #except(Exception) as e:
      #   print(e)
 
 def main_former():
     try:
         weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
-        head_body = make_body_week(weekly_dict, is_difference=False)
-        tweet(head_body, bodies_list)
+        print(weekly_dict==True)
+        if weekly_dict == "end":
+            # print("here 1")
+            return
+        else:
+            # print("here")
+            head_body = make_body_week(weekly_dict, is_difference=False)
+        
+        if is_debug:
+            print(head_body, "\n\n", bodies_list)
+        else:
+            tweet(head_body, bodies_list)
     except(Exception) as e:
         print(e)
 
 def main_latter():
     try:
         weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
-        head_body = make_body_week(weekly_dict, is_difference=False)
-        tweet(head_body, bodies_list)
+        if weekly_dict == "end":
+            return
+        else:
+            head_body = make_body_week(weekly_dict, is_difference=False)
+        
+        if is_debug:
+            print(head_body, "\n\n", bodies_list)
+        else:
+            tweet(head_body, bodies_list)
     except(Exception) as e:
         print(e)
 
@@ -204,7 +238,10 @@ def test():
 
 if __name__=="__main__":
     # scraping()
+    # main_former()
+    # main_latter()
     main_difference()
+    main_difference_later()
     # main_latter()
     exit()
     today = datetime.datetime.today()
