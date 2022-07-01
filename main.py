@@ -118,7 +118,7 @@ def scraping(is_former=True, is_difference=False):
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
             # Bコートの予約が取れない場合
-            # df.iloc[1, :]="str"
+            df.iloc[1, :]="str"
             if season == "夏時間":
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
@@ -135,7 +135,7 @@ def scraping(is_former=True, is_difference=False):
                 save_list.append(list(map(int, value)))
         text = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
-        print(text)
+        # print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
         if is_former:
