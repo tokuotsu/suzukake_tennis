@@ -118,7 +118,7 @@ def scraping(is_former=True, is_difference=False):
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
             # Bコートの予約が取れない場合
-            df.iloc[1, :]="str"
+            # df.iloc[1, :]="str"
             if season == "夏時間":
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
