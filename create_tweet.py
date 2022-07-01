@@ -47,7 +47,7 @@ def num2youbi(num):
 
 def getJST():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
-    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=1)
+    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=4)
     # return datetime.datetime.now()
 
 # ツリーにつなげる詳細ツイートの作成
@@ -67,7 +67,7 @@ def make_body_day(search_date, now_date, dictionary, type_season):
     return body
 
 # 1週間分の空きコート数の作成
-def make_body_week(weekly_dict, is_difference):
+def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
         body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
@@ -88,12 +88,15 @@ def make_body_week(weekly_dict, is_difference):
                 sum_list[i] = f"({sum_list[i]})"
         body += f"{key} | {' | '.join(sum_list)} | \n"
     # body += f"\n{now_date} 現在"
-    if is_difference:
-        body += "\n※*は変更分"
+    if getJST().hour < 17 and (not is_former):
+        return body
     else:
-        body += "\n※数字は残り面数"
-    print(body)
-    return body
+        if is_difference:
+            body += "\n※*は変更分"
+        else:
+            body += "\n※数字は残り面数"
+        print(body)
+        return body
 
 # 変更の有無による処理の変更
 def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former):

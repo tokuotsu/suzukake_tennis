@@ -18,7 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-is_debug = False
+is_debug = True
 
 # ローカルでは必要
 if is_debug:
@@ -89,15 +89,22 @@ def scraping(is_former=True, is_difference=False):
     # 予約状況確認
     weekly_dict = defaultdict()
     bodies_list = []
-    for i in range(14):
+    count = 0
+    for i in range(15):
         # today = datetime.datetime.today()
         today = getJST()
-        if not is_former:
-            if i < 7:
-                continue
+        if today.hour < 17:
+            if not is_former: 
+                if i < 7:
+                    continue
         else:
-            if today.hour >= 17 and i==0:
+            if i==0:
                 continue
+            else:
+                count += 1
+            if not is_former:
+                if count <= 7:
+                    continue
         search_date = today + datetime.timedelta(days=i)
         search_date_str = search_date.strftime('%Y%m%d')
         url = f"https://kyomu2.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx?date={search_date_str}&bs=5&nofilter=1&m=d"
@@ -145,9 +152,14 @@ def scraping(is_former=True, is_difference=False):
         # print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
-        if is_former:
-            if i == 6:
-                break
+        if today.hour < 17:
+            if is_former:
+                if i == 6:
+                    break
+        else:
+            if is_former:
+                if count == 7:
+                    break
     
     # 変更分を参照する処理
     if is_difference:
@@ -182,7 +194,7 @@ def main_difference():
     if weekly_dict == "end":
         return
     else:
-        head_body = make_body_week(weekly_dict, is_difference=True)
+        head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
     
     if is_debug:
         print(head_body, "\n\n", bodies_list)
@@ -197,7 +209,7 @@ def main_difference_later():
     if weekly_dict == "end":
         return
     else:
-        head_body = make_body_week(weekly_dict, is_difference=True)
+        head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
     
     if is_debug:
         print(head_body, "\n\n", bodies_list)
@@ -215,7 +227,7 @@ def main_former():
             return
         else:
             # print("here")
-            head_body = make_body_week(weekly_dict, is_difference=False)
+            head_body = make_body_week(weekly_dict, is_difference=False, is_former=True)
         
         if is_debug:
             print(head_body, "\n\n", bodies_list)
@@ -230,7 +242,7 @@ def main_latter():
         if weekly_dict == "end":
             return
         else:
-            head_body = make_body_week(weekly_dict, is_difference=False)
+            head_body = make_body_week(weekly_dict, is_difference=False, is_former=False)
         
         if is_debug:
             print(head_body, "\n\n", bodies_list)
