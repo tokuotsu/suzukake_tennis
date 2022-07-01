@@ -167,20 +167,20 @@ def scraping(is_former=True, is_difference=False):
         return weekly_dict, bodies_list
 
 def main_difference():
-    try:
-        weekly_dict, _, bodies_list = scraping(is_former=True, is_difference=True)
-        head_body = make_body_week(weekly_dict, is_difference=True)
-        tweet(head_body, bodies_list)
-    except(Exception) as e:
-        print(e)
+    #try:
+    weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
+    head_body = make_body_week(weekly_dict, is_difference=True)
+    tweet(head_body, bodies_list)
+    #except(Exception) as e:
+     #   print(e)
 
 def main_difference_later():
-    try:
-        weekly_dict, _, bodies_list = scraping(is_former=False, is_difference=True)
-        head_body = make_body_week(weekly_dict, is_difference=True)
-        tweet(head_body, bodies_list)
-    except(Exception) as e:
-        print(e)
+    
+    weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
+    head_body = make_body_week(weekly_dict, is_difference=True)
+    tweet(head_body, bodies_list)
+    #except(Exception) as e:
+     #   print(e)
 
 def main_former():
     try:
