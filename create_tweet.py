@@ -47,6 +47,7 @@ def num2youbi(num):
 
 def getJST():
     return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    # デバッグ用、日付を変更できる
     # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=4)
     # return datetime.datetime.now()
 
@@ -57,8 +58,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
     body = f"{search_date} 空き状況\n{'-'*16} | A | B | C | \n"
     for key, value in dictionary.items():
         value = np.array(value)
+        # 100で割った余りが0なら×、それ以外は全て○
         value = np.where(value%100==0, "×", "○")
-        # 
+        # 以下はエラーが出るのでやらない。
         # value = np.where(value%100==0, "×", value)
         # value = np.where(value==1, "○", value)
         # value = np.where(value==101, "(○)", value)
@@ -66,7 +68,7 @@ def make_body_day(search_date, now_date, dictionary, type_season):
     body += f"\n({now_date})"
     return body
 
-# 1週間分の空きコート数の作成
+# 1週間分の空きコート数の作成（先頭のツイート）
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
@@ -80,10 +82,12 @@ def make_body_week(weekly_dict, is_difference, is_former):
         sum_list = list(map(int, value.sum(axis=0)))
         # 変更があったものについては、*をつける
         for i, sum_li in enumerate(sum_list):
+            # 100で割った余りが10以上なら変更がある
             if sum_li%100 >= 10:
                 sum_list[i] = str(sum_li%10) + "*"
             else:
                 sum_list[i] = str(sum_li%100)
+            # 100以上なら、土日祝教員用のためカッコをつける
             if sum_li >= 100:
                 sum_list[i] = f"({sum_list[i]})"
         body += f"{key} | {' | '.join(sum_list)} | \n"
@@ -102,7 +106,7 @@ def make_body_week(weekly_dict, is_difference, is_former):
 def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former):
     flag = True
     for key, value in weekly_dict.items():
-        # 新しい日付のもの
+        # 新しい日付の場合、ツイートせず、データ保存のみ
         if key not in zenkai_dict.keys():
             flag = False
             if is_former:
@@ -111,7 +115,7 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             else:
                 with open("./zenkai_latter.txt", "wb") as f:
                     pickle.dump(weekly_dict, f)
-            # exit()
+            print(f"{getJST()}:\nnew date, data saved only")
             return "end", "end"
             # return weekly_dict, bodies_list
         zenkai_value = zenkai_dict[key]
@@ -122,23 +126,25 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
     if flag:
         print(f"{getJST()}:\nThere is no difference")
         return "end", "end"
-        # exit()
     else:
         new_bodies_list = []
         for (key, value), body in zip(weekly_dict.items(), bodies_list):
             zenkai_value = np.array(zenkai_dict[key])
             value = np.array(value)
             tflist = value==zenkai_value
+            # 変更があった場合、10を足す
             new_value = np.where(tflist, value, value+10)
             weekly_dict_mask[key] = new_value
-
+            # 変更があった場合、文字列の状態からばらして、*を追加
             body_list = [bod.split(' | ') for bod in body.split("\n")]
             for i, body in enumerate(body_list):
                 for j, bo in enumerate(body):
                     if bo == "×" or bo == "○":
                         if not tflist[i-2][j-1]:
                             body_list[i][j]+="*"
+            # 再構成
             new_bodies_list.append("\n".join([" | ".join(body) for body in body_list]))
+        # 前回のデータを更新
         if is_former:
             with open("./zenkai_former.txt", "wb") as f:
                 pickle.dump(weekly_dict, f)

@@ -18,9 +18,13 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-is_debug = False
+# デプロイ時にFalseにすることを絶対忘れない！
+is_debug = True
+if is_debug:
+    print("デバッグ開始")
+else:
+    print("デプロイ環境！")
 
-# ローカルでは必要
 if is_debug:
     import chromedriver_binary
 
@@ -93,6 +97,10 @@ def scraping(is_former=True, is_difference=False):
     for i in range(15):
         # today = datetime.datetime.today()
         today = getJST()
+        # 17時以降は本日分は呟かない。
+        # なので、明日から7日分、それ以降7日分をそれぞれformer,latterが呟く
+        # 逆に17時以前は本日分も呟くため、7日分をformer,8日分をlatterが呟く
+        # 8日分は分量が多いため、※以降を消す処理をmake_body_week()に入れた
         if today.hour < 17:
             if not is_former: 
                 if i < 7:
@@ -118,7 +126,9 @@ def scraping(is_former=True, is_difference=False):
         _, season, daytype, = str(df["施設.2"][0]).split("：")
         key_season = ""
         if daytype == "平日":
+            # 12:15-, 17:00-とz面は最初に除く
             df = df.drop(columns=["12:15 -", "17:00 -"], index=3)
+            # 1 -> 予約なし、0 -> 予約あり
             a = np.where(np.array(df.isna()), 1, 0)
             if season == "夏時間":
                 key_season = "summer_weekday"
@@ -126,14 +136,19 @@ def scraping(is_former=True, is_difference=False):
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
             if season == "夏時間":
+                # 17:00-とz面は最初に除く
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
             else: # 冬
+                # 16:00-とz面は最初に除く
                 df = df.drop(columns=["16:00 -"], index=3)
                 key_season = "winter_holiday"
-            # Bコートの予約が取れないため            
+            # 土日祝日はBコートの予約が取れないため
+            # ここでは、100を足している。
+            # 後の処理で、変更があった場合は10を足しており、100で割ったあまりや10で割った余りに応じて表示を変える
             a = np.where(np.array(df.isna()), 1, 0)
             df_str = df.copy()
+            # B面の行は1
             df_str.iloc[1,:]="teacher_only"
             a = np.where(np.array(df_str)=="teacher_only", a+100, a)
         
@@ -141,9 +156,7 @@ def scraping(is_former=True, is_difference=False):
         save_list = []
         for value, name in zip(a.T, df):
             if ":" in name:
-                # 1 -> 予約なし、0 -> 予約あり
                 tmp = list(map(int, value))
-                # tmp[1] = 100
                 new_dict[name] = tmp
                 save_list.append(tmp)
         # print(save_list)
@@ -188,7 +201,8 @@ def scraping(is_former=True, is_difference=False):
     else:
         return weekly_dict, bodies_list
 
-def main_difference():
+# 違いツイート前半分
+def main_difference_former():
     #try:
     weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
     if weekly_dict == "end":
@@ -203,7 +217,8 @@ def main_difference():
     #except(Exception) as e:
      #   print(e)
 
-def main_difference_later():
+# 違いツイート後半分
+def main_difference_latter():
     # try:
     weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
     if weekly_dict == "end":
@@ -218,6 +233,7 @@ def main_difference_later():
     #except(Exception) as e:
      #   print(e)
 
+# 定期ツイート前半分
 def main_former():
     try:
         weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
@@ -236,6 +252,7 @@ def main_former():
     except(Exception) as e:
         print(e)
 
+# 定期ツイート後半分
 def main_latter():
     try:
         weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
@@ -259,11 +276,11 @@ if __name__=="__main__":
     # scraping()
     # main_former()
     # main_latter()
-    # main_difference()
+    # main_difference_former()
     # exit()
     if is_debug:
-        main_difference()
-        main_difference_later()
+        main_difference_former()
+        main_difference_latter()
     # main_latter()
     exit()
     today = datetime.datetime.today()
