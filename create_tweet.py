@@ -54,10 +54,14 @@ def getJST():
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date = search_date.strftime("%m/%d") + f"（{num2youbi(search_date.strftime('%w'))}）"
-    body = f"{search_date} 予約状況\n{'-'*16} | A | B | C | \n"
+    body = f"{search_date} 空き状況\n{'-'*16} | A | B | C | \n"
     for key, value in dictionary.items():
         value = np.array(value)
-        value = np.where(value==0, "×", "○")
+        value = np.where(value%100==0, "×", "○")
+        # 
+        # value = np.where(value%100==0, "×", value)
+        # value = np.where(value==1, "○", value)
+        # value = np.where(value==101, "(○)", value)
         body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} | \n"
     body += f"\n({now_date})"
     return body
