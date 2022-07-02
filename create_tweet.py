@@ -46,9 +46,9 @@ def num2youbi(num):
     return youbi[num]
 
 def getJST():
-    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
     # デバッグ用、日付を変更できる
-    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=4)
+    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=17)
     # return datetime.datetime.now()
 
 # ツリーにつなげる詳細ツイートの作成
@@ -107,7 +107,7 @@ def make_body_week(weekly_dict, is_difference, is_former):
             if is_former:
                 j = h + 1
             else:
-                j = h + 9
+                j = h + 8
         body += f"{num_list[j]}{key} | {' | '.join(sum_list)} |\n"
     # body += f"\n{now_date} 現在"
     # if getJST().hour < 17 and (not is_former):
@@ -129,7 +129,6 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
     for key, value in weekly_dict.items():
         # 新しい日付の場合、ツイートせず、データ保存のみ
         if key not in zenkai_dict.keys():
-            flag = False
             if is_former:
                 with open("./zenkai_former.txt", "wb") as f:
                     pickle.dump(weekly_dict, f)
@@ -142,7 +141,7 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
         zenkai_value = zenkai_dict[key]
         if value!=zenkai_value:
             flag = False
-            break
+            # break
     # 変化が無かった場合
     if flag:
         print(f"There is no difference")

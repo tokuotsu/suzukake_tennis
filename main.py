@@ -219,90 +219,90 @@ def scraping(is_former=True, is_difference=False):
 def main_difference_former():
     print(f"\n{getJST()}")
     print(f"{sys._getframe().f_code.co_name} Starting...")
-    try:
-        weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
-        if weekly_dict == "end":
-            print("Finished!")
-            return
-        else:
-            head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
-        
-        if is_debug:
-            print(head_body)
-            for body in bodies_list:
-                print(body)
-        else:
-            tweet(head_body, bodies_list)
+    # try:
+    weekly_dict, bodies_list = scraping(is_former=True, is_difference=True)
+    if weekly_dict == "end":
         print("Finished!")
-    except(Exception) as e:
-       print(e)
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
+    
+    if is_debug:
+        print(head_body)
+        for body in bodies_list:
+            print(body)
+    else:
+        tweet(head_body, bodies_list)
+    print("Finished!")
+    # except(Exception) as e:
+    #    print(e)
 
 # 違いツイート後半分
 def main_difference_latter():
     print(f"\n{getJST()}")
     print(f"{sys._getframe().f_code.co_name} Starting...")
-    try:
-        weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
-        if weekly_dict == "end":
-            print("Finished!")
-            return
-        else:
-            head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
-        
-        if is_debug:
-            print(head_body)
-            for body in bodies_list:
-                print(body)
-        else:
-            tweet(head_body, bodies_list)
+    # try:
+    weekly_dict, bodies_list = scraping(is_former=False, is_difference=True)
+    if weekly_dict == "end":
         print("Finished!")
-    except(Exception) as e:
-       print(e)
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
+    
+    if is_debug:
+        print(head_body)
+        for body in bodies_list:
+            print(body)
+    else:
+        tweet(head_body, bodies_list)
+    print("Finished!")
+    # except(Exception) as e:
+    #    print(e)
 
 # 定期ツイート前半分
 def main_former():
     print(f"\n{getJST()}")
     print(f"{sys._getframe().f_code.co_name} Starting...")
-    try:
-        weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
-        print(weekly_dict==True)
-        if weekly_dict == "end":
-            print("Finished!")
-            return
-        else:
-            head_body = make_body_week(weekly_dict, is_difference=False, is_former=True)
-        
-        if is_debug:
-            print(head_body)
-            for body in bodies_list:
-                print(body)
-        else:
-            tweet(head_body, bodies_list)
+    # try:
+    weekly_dict, bodies_list = scraping(is_former=True, is_difference=False)
+    print(weekly_dict==True)
+    if weekly_dict == "end":
         print("Finished!")
-    except(Exception) as e:
-        print(e)
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=False, is_former=True)
+    
+    if is_debug:
+        print(head_body)
+        for body in bodies_list:
+            print(body)
+    else:
+        tweet(head_body, bodies_list)
+        print("Finished!")
+    # except(Exception) as e:
+    #     print(e)
 
 # 定期ツイート後半分
 def main_latter():
     print(f"\n{getJST()}")
     print(f"{sys._getframe().f_code.co_name} Starting...")
-    try:
-        weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
-        if weekly_dict == "end":
-            print("Finished!")
-            return
-        else:
-            head_body = make_body_week(weekly_dict, is_difference=False, is_former=False)
-        
-        if is_debug:
-            print(head_body)
-            for body in bodies_list:
-                print(body)
-        else:
-            tweet(head_body, bodies_list)
+    # try:
+    weekly_dict, bodies_list = scraping(is_former=False, is_difference=False)
+    if weekly_dict == "end":
         print("Finished!")
-    except(Exception) as e:
-        print(e)
+        return
+    else:
+        head_body = make_body_week(weekly_dict, is_difference=False, is_former=False)
+    
+    if is_debug:
+        print(head_body)
+        for body in bodies_list:
+            print(body)
+    else:
+        tweet(head_body, bodies_list)
+    print("Finished!")
+    # except(Exception) as e:
+    #     print(e)
 
 def test():
     now_jst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
@@ -311,10 +311,10 @@ def test():
 if __name__=="__main__":
     # scraping()
     # main_former()
-    main_latter()
+    # main_latter()
     # main_difference_former()
     # main_difference_latter()
-    exit()
+    # exit()
     if is_debug:
         main_difference_former()
         main_difference_latter()
