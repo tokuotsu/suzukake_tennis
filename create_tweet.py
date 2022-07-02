@@ -55,7 +55,7 @@ def getJST():
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date = search_date.strftime("%m/%d") + f"({num2youbi(search_date.strftime('%w'))})"
-    body = f"{search_date}\n{'='*6} |  A  |  B  |  C  |\n"
+    body = f"{search_date}\n{'='*7} |  A  |  B  |  C  |\n"
     for key, value in dictionary.items():
         # value = np.array(value)
         # 100で割った余りが0なら×、それ以外は全て○
