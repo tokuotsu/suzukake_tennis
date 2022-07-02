@@ -24,7 +24,7 @@ is_debug = False
 
 if is_debug:
     print("デバッグ開始")
-    print("この後デプロイする場合、デバッグ中にid_debug = Falseに変更！")
+    print("この後デプロイする場合、デバッグ中にis_debug = Falseに変更！")
 else:
     print("デプロイ環境！")
 

@@ -77,9 +77,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新】\n{now_date}現在の予約状況\n{'='*8} | A |  B  | C | \n"
+        body = f"【更新】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C | \n"
     else:
-        body = f"【定期】\n{now_date}現在の予約状況\n{'='*8} | A |  B  | C | \n"
+        body = f"【定期】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C | \n"
     num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
     for h, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
@@ -118,7 +118,7 @@ def make_body_week(weekly_dict, is_difference, is_former):
     if is_difference:
         body += "\n※* は変更分"
     else:
-        body += "\n※数字は残り面数"
+        body += "\n※詳細はツリー"
     body = body.replace("|", "")
     print(body)
     return body
