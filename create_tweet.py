@@ -46,9 +46,9 @@ def num2youbi(num):
     return youbi[num]
 
 def getJST():
-    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
+    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))
     # デバッグ用、日付を変更できる
-    return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=17)
+    # return datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9), 'JST'))+ datetime.timedelta(hours=17)
     # return datetime.datetime.now()
 
 # ツリーにつなげる詳細ツイートの作成
