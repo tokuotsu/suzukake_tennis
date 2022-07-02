@@ -4,7 +4,7 @@ import pickle
 import datetime
 import tweepy
 import numpy as np
-from property import DISPLAY_NAME
+from property import DISPLAY_NAME, DISPLAY_NAME_2
 
 if os.path.exists("config.py"):
     from config import CONFIG
@@ -54,17 +54,21 @@ def getJST():
 # ツリーにつなげる詳細ツイートの作成
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
-    search_date = search_date.strftime("%m/%d") + f"（{num2youbi(search_date.strftime('%w'))}）"
-    body = f"{search_date} 空き状況\n{'-'*16} | A | B | C | \n"
+    search_date = search_date.strftime("%m/%d") + f"({num2youbi(search_date.strftime('%w'))})"
+    body = f"{search_date}\n{'='*6} |  A  |  B  |  C  | \n"
     for key, value in dictionary.items():
-        value = np.array(value)
+        # value = np.array(value)
         # 100で割った余りが0なら×、それ以外は全て○
-        value = np.where(value%100==0, "×", "○")
-        # 以下はエラーが出るのでやらない。
-        # value = np.where(value%100==0, "×", value)
-        # value = np.where(value==1, "○", value)
-        # value = np.where(value==101, "(○)", value)
-        body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} | \n"
+        # value = np.where(value%100==0, "×", "○")
+        # body += f"{DISPLAY_NAME[type_season][key]} | {' | '.join(value)} | \n"
+        
+        # 全表示
+        value = str(value).replace("[", "").replace("]", "").replace("101", "(○)").replace("100", "(×)").replace("1", " ○ ").replace("0", " × ")
+        value = value.split(", ")
+        if key in DISPLAY_NAME_2[type_season].keys():
+           body += f"{DISPLAY_NAME_2[type_season][key]} | {' | '.join(value)} | \n"
+        else:
+            body += f"{key} | {' | '.join(value)} | \n"
     body += f"\n({now_date})"
     return body
 
@@ -72,9 +76,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} |  A  |  B  |  C  | \n"
     else:
-        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} |  A  |  B  |  C  | \n"
 
     for i, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
@@ -84,13 +88,16 @@ def make_body_week(weekly_dict, is_difference, is_former):
         for i, sum_li in enumerate(sum_list):
             # 100で割った余りが10以上なら変更がある
             if sum_li%100 >= 10:
-                sum_list[i] = str(sum_li%10) + "*"
+                sum_list[i] = f"  {sum_li%10}* "
             else:
-                sum_list[i] = str(sum_li%100)
+                sum_list[i] = f"  {sum_li%100}  "
             # 100以上なら、土日祝教員用のためカッコをつける
-            if sum_li >= 100:
-                sum_list[i] = f"({sum_list[i]})"
-        body += f"{key} | {' | '.join(sum_list)} | \n"
+            if sum_li >= 400:
+                if "*" in sum_list[i]:
+                    sum_list[i] = f" ({sum_list[i].replace(' ', '')})"
+                else:
+                    sum_list[i] = f" ({sum_list[i].replace(' ', '')}) "
+        body += f"{key} |{'|'.join(sum_list)}| \n"
     # body += f"\n{now_date} 現在"
     if getJST().hour < 17 and (not is_former):
         print(body)
@@ -137,12 +144,12 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             new_value = np.where(tflist, value, value+10)
             weekly_dict_mask[key] = new_value
             # 変更があった場合、文字列の状態からばらして、*を追加
-            body_list = [bod.split(' | ') for bod in body.split("\n")]
+            body_list = [bod.split('|') for bod in body.split("\n")]
             for i, body in enumerate(body_list):
                 for j, bo in enumerate(body):
-                    if bo == "×" or bo == "○":
+                    if "×" in bo or "○" in bo:
                         if not tflist[i-2][j-1]:
-                            body_list[i][j]+="*"
+                            body_list[i][j] = body_list[i][j].replace("○ ", "○*").replace("× ", "×*").replace("○) ", "○*)").replace("×) ", "×*)")
             # 再構成
             new_bodies_list.append("\n".join([" | ".join(body) for body in body_list]))
         # 前回のデータを更新

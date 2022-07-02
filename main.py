@@ -20,11 +20,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 # デプロイ時にFalseにすることを絶対忘れない！
-is_debug = False
+is_debug = True
 
 if is_debug:
     print("デバッグ開始")
-    print("デバッグ中にid_debug = Falseに変更")
+    print("この後デプロイする場合、デバッグ中にid_debug = Trueに変更！")
 else:
     print("デプロイ環境！")
 
@@ -50,9 +50,10 @@ def scraping(is_former=True, is_difference=False):
     url = "https://portal.nap.gsic.titech.ac.jp/GetAccess/Login?Template=userpass_key&AUTHMETHOD=UserPassword"
     options = Options()
     # ブラウザ表示の有無
+    options.add_argument('--headless')
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     if not is_debug:
         options.add_argument('--headless')
-        options.add_experimental_option('excludeSwitches', ['enable-logging'])
     driver = webdriver.Chrome(options=options)
     driver.get(url)
 
@@ -83,6 +84,7 @@ def scraping(is_former=True, is_difference=False):
     driver.find_element(By.NAME, "message5").send_keys(ans3)
     button = driver.find_element(By.NAME, "OK")
     button.click()
+    print("logged in!")
 
     # 教務webシステム
     url = "https://kyomu2.gakumu.titech.ac.jp/Titech/Default.aspx"
@@ -131,9 +133,14 @@ def scraping(is_former=True, is_difference=False):
         key_season = ""
         if daytype == "平日":
             # 12:15-, 17:00-とz面は最初に除く
-            df = df.drop(columns=["12:15 -", "17:00 -"], index=3)
+            # df = df.drop(columns=["12:15 -", "17:00 -"], index=3)
+            df = df.drop(columns=["17:00 -"], index=3)
             # 1 -> 予約なし、0 -> 予約あり
             a = np.where(np.array(df.isna()), 1, 0)
+            df_str = df.copy()
+            # B面の行は1
+            df_str["12:15 -"]="teacher_only"
+            # a = np.where(np.array(df_str)=="teacher_only", a+100, a)
             if season == "夏時間":
                 key_season = "summer_weekday"
             else: # 冬
@@ -154,7 +161,7 @@ def scraping(is_former=True, is_difference=False):
             df_str = df.copy()
             # B面の行は1
             df_str.iloc[1,:]="teacher_only"
-            a = np.where(np.array(df_str)=="teacher_only", a+100, a)
+        a = np.where(np.array(df_str)=="teacher_only", a+100, a)
         
         new_dict = defaultdict(list)
         save_list = []
@@ -218,7 +225,9 @@ def main_difference_former():
             head_body = make_body_week(weekly_dict, is_difference=True, is_former=True)
         
         if is_debug:
-            print(head_body, "\n\n", bodies_list)
+            print(head_body)
+            for body in bodies_list:
+                print(body)
         else:
             tweet(head_body, bodies_list)
         print("Finished!")
@@ -238,7 +247,9 @@ def main_difference_latter():
             head_body = make_body_week(weekly_dict, is_difference=True, is_former=False)
         
         if is_debug:
-            print(head_body, "\n\n", bodies_list)
+            print(head_body)
+            for body in bodies_list:
+                print(body)
         else:
             tweet(head_body, bodies_list)
         print("Finished!")
@@ -259,7 +270,9 @@ def main_former():
             head_body = make_body_week(weekly_dict, is_difference=False, is_former=True)
         
         if is_debug:
-            print(head_body, "\n\n", bodies_list)
+            print(head_body)
+            for body in bodies_list:
+                print(body)
         else:
             tweet(head_body, bodies_list)
         print("Finished!")
@@ -279,7 +292,9 @@ def main_latter():
             head_body = make_body_week(weekly_dict, is_difference=False, is_former=False)
         
         if is_debug:
-            print(head_body, "\n\n", bodies_list)
+            print(head_body)
+            for body in bodies_list:
+                print(body)
         else:
             tweet(head_body, bodies_list)
         print("Finished!")
@@ -295,8 +310,10 @@ if __name__=="__main__":
     # main_former()
     # main_latter()
     # main_difference_former()
+    # main_difference_latter()
     # exit()
     if is_debug:
         main_difference_former()
         main_difference_latter()
+        pass
     # main_latter()
