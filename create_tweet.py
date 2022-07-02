@@ -77,9 +77,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A |  B  | C | \n"
     else:
-        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
+        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A |  B  | C | \n"
     num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
     for h, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
@@ -95,6 +95,9 @@ def make_body_week(weekly_dict, is_difference, is_former):
             # 100以上なら、土日祝教員用のためカッコをつける
             if sum_li >= 400:
                 sum_list[i] = f"({sum_list[i]})"
+            else:
+                if i == 1:
+                    sum_list[i] = f" {sum_list[i]} "
         if getJST().hour < 17:
             if is_former:
                 j = h
