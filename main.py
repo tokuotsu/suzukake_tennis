@@ -24,7 +24,7 @@ is_debug = False
 
 if is_debug:
     print("デバッグ開始")
-    print("この後デプロイする場合、デバッグ中にid_debug = Trueに変更！")
+    print("この後デプロイする場合、デバッグ中にid_debug = Falseに変更！")
 else:
     print("デプロイ環境！")
 
@@ -99,6 +99,7 @@ def scraping(is_former=True, is_difference=False):
     # 予約状況確認
     weekly_dict = defaultdict()
     bodies_list = []
+    bodies_display_list = []
     count = 0
     for i in range(15):
         # today = datetime.datetime.today()
@@ -171,8 +172,10 @@ def scraping(is_former=True, is_difference=False):
                 new_dict[name] = tmp
                 save_list.append(tmp)
         # print(save_list)
-        text = make_body_day(search_date, today, new_dict, key_season)
+        text, text_display = make_body_day(search_date, today, new_dict, key_season)
         bodies_list.append(text)
+        bodies_display_list.append(text_display)
+
         # print(text)
         key_tmp = f"{search_date_str[4:6]}/{search_date_str[6:8]}({num2youbi(search_date.strftime('%w'))})"
         weekly_dict[key_tmp] = save_list
@@ -210,7 +213,7 @@ def scraping(is_former=True, is_difference=False):
 
         return weekly_dict_mask, bodies_list
     else:
-        return weekly_dict, bodies_list
+        return weekly_dict, bodies_display_list
 
 # 違いツイート前半分
 def main_difference_former():

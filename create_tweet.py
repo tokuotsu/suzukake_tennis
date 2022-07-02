@@ -55,7 +55,7 @@ def getJST():
 def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date = search_date.strftime("%m/%d") + f"({num2youbi(search_date.strftime('%w'))})"
-    body = f"{search_date}\n{'='*6} |  A  |  B  |  C  | \n"
+    body = f"{search_date}\n{'='*6} |  A  |  B  |  C  |\n"
     for key, value in dictionary.items():
         # value = np.array(value)
         # 100で割った余りが0なら×、それ以外は全て○
@@ -66,19 +66,20 @@ def make_body_day(search_date, now_date, dictionary, type_season):
         value = str(value).replace("[", "").replace("]", "").replace("101", "(○)").replace("100", "(×)").replace("1", " ○ ").replace("0", " × ")
         value = value.split(", ")
         if key in DISPLAY_NAME_2[type_season].keys():
-           body += f"{DISPLAY_NAME_2[type_season][key]} | {' | '.join(value)} | \n"
+           body += f"{DISPLAY_NAME_2[type_season][key]} | {' | '.join(value)} |\n"
         else:
-            body += f"{key} | {' | '.join(value)} | \n"
+            body += f"{key} | {' | '.join(value)} |\n"
     body += f"\n({now_date})"
-    return body
+    body_display = body.replace("|", "")
+    return body, body_display
 
 # 1週間分の空きコート数の作成（先頭のツイート）
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} |  A  |  B  |  C  | \n"
+        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
     else:
-        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} |  A  |  B  |  C  | \n"
+        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
 
     for i, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
@@ -88,16 +89,13 @@ def make_body_week(weekly_dict, is_difference, is_former):
         for i, sum_li in enumerate(sum_list):
             # 100で割った余りが10以上なら変更がある
             if sum_li%100 >= 10:
-                sum_list[i] = f"  {sum_li%10}* "
+                sum_list[i] = str(sum_li%10) + "*"
             else:
-                sum_list[i] = f"  {sum_li%100}  "
+                sum_list[i] = str(sum_li%100)
             # 100以上なら、土日祝教員用のためカッコをつける
             if sum_li >= 400:
-                if "*" in sum_list[i]:
-                    sum_list[i] = f" ({sum_list[i].replace(' ', '')})"
-                else:
-                    sum_list[i] = f" ({sum_list[i].replace(' ', '')}) "
-        body += f"{key} |{'|'.join(sum_list)}| \n"
+                sum_list[i] = f"({sum_list[i]})"
+        body += f"{key} | {' | '.join(sum_list)} |\n"
     # body += f"\n{now_date} 現在"
     if getJST().hour < 17 and (not is_former):
         print(body)
@@ -144,14 +142,15 @@ def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, i
             new_value = np.where(tflist, value, value+10)
             weekly_dict_mask[key] = new_value
             # 変更があった場合、文字列の状態からばらして、*を追加
-            body_list = [bod.split('|') for bod in body.split("\n")]
+            body_list = [bod.split(' | ') for bod in body.split("\n")]
             for i, body in enumerate(body_list):
                 for j, bo in enumerate(body):
                     if "×" in bo or "○" in bo:
                         if not tflist[i-2][j-1]:
-                            body_list[i][j] = body_list[i][j].replace("○ ", "○*").replace("× ", "×*").replace("○) ", "○*)").replace("×) ", "×*)")
+                            body_list[i][j] = body_list[i][j].replace("○ ", "○*").replace("× ", "×*").replace("○)", "○*)").replace("×)", "×*)")
             # 再構成
             new_bodies_list.append("\n".join([" | ".join(body) for body in body_list]))
+        new_bodies_list = [body.replace("|", "") for body in new_bodies_list]
         # 前回のデータを更新
         if is_former:
             with open("./zenkai_former.txt", "wb") as f:
