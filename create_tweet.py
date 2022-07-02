@@ -118,7 +118,9 @@ def make_body_week(weekly_dict, is_difference, is_former):
     if is_difference:
         body += "\n※* は変更分"
     else:
-        body += "\n※詳細はツリー"
+        body += "\n※詳細はツリーへ"
+        if getJST().hour < 17 and is_former:
+            body = body.replace("="*8, "="*7)
     body = body.replace("|", "")
     print(body)
     return body
