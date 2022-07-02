@@ -110,7 +110,7 @@ def scraping(is_former=True, is_difference=False):
         # 8日分は分量が多いため、※以降を消す処理をmake_body_week()に入れた
         if today.hour < 17:
             if not is_former: 
-                if i < 7:
+                if i < 8:
                     continue
         else:
             if i==0:
@@ -181,7 +181,7 @@ def scraping(is_former=True, is_difference=False):
         weekly_dict[key_tmp] = save_list
         if today.hour < 17:
             if is_former:
-                if i == 6:
+                if i == 7:
                     break
         else:
             if is_former:

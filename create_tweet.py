@@ -77,9 +77,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 def make_body_week(weekly_dict, is_difference, is_former):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A |  B  | C | \n"
+        body = f"【更新】\n{now_date}現在の予約状況\n{'='*8} | A |  B  | C | \n"
     else:
-        body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A |  B  | C | \n"
+        body = f"【定期】\n{now_date}現在の予約状況\n{'='*8} | A |  B  | C | \n"
     num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
     for h, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
@@ -102,26 +102,26 @@ def make_body_week(weekly_dict, is_difference, is_former):
             if is_former:
                 j = h
             else:
-                j = h + 7
+                j = h + 8
         else:
             if is_former:
                 j = h + 1
             else:
-                j = h + 8
+                j = h + 9
         body += f"{num_list[j]}{key} | {' | '.join(sum_list)} |\n"
     # body += f"\n{now_date} 現在"
-    if getJST().hour < 17 and (not is_former):
-        body = body.replace("|", "")
-        print(body)
-        return body
+    # if getJST().hour < 17 and (not is_former):
+    #     body = body.replace("|", "")
+    #     print(body)
+    #     return body
+    # else:
+    if is_difference:
+        body += "\n※* は変更分"
     else:
-        if is_difference:
-            body += "\n※*は変更分"
-        else:
-            body += "\n※数字は残り面数"
-        body = body.replace("|", "")
-        print(body)
-        return body
+        body += "\n※数字は残り面数"
+    body = body.replace("|", "")
+    print(body)
+    return body
 
 # 変更の有無による処理の変更
 def detect_difference(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list, is_former):
