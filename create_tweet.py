@@ -80,8 +80,8 @@ def make_body_week(weekly_dict, is_difference, is_former):
         body = f"【更新】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
     else:
         body = f"【定期】\n{now_date}現在の予約状況\n{'='*7} | A | B | C | \n"
-
-    for i, (key, value) in enumerate(weekly_dict.items()):       
+    num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
+    for h, (key, value) in enumerate(weekly_dict.items()):       
         value = np.array(value)
         # 縦方向に足し算
         sum_list = list(map(int, value.sum(axis=0)))
@@ -95,9 +95,20 @@ def make_body_week(weekly_dict, is_difference, is_former):
             # 100以上なら、土日祝教員用のためカッコをつける
             if sum_li >= 400:
                 sum_list[i] = f"({sum_list[i]})"
-        body += f"{key} | {' | '.join(sum_list)} |\n"
+        if getJST().hour < 17:
+            if is_former:
+                j = h
+            else:
+                j = h + 7
+        else:
+            if is_former:
+                j = h + 1
+            else:
+                j = h + 8
+        body += f"{num_list[j]}{key} | {' | '.join(sum_list)} |\n"
     # body += f"\n{now_date} 現在"
     if getJST().hour < 17 and (not is_former):
+        body = body.replace("|", "")
         print(body)
         return body
     else:
@@ -105,6 +116,7 @@ def make_body_week(weekly_dict, is_difference, is_former):
             body += "\n※*は変更分"
         else:
             body += "\n※数字は残り面数"
+        body = body.replace("|", "")
         print(body)
         return body
 

@@ -310,11 +310,11 @@ def test():
 
 if __name__=="__main__":
     # scraping()
-    # main_former()
+    main_former()
     # main_latter()
     # main_difference_former()
     # main_difference_latter()
-    # exit()
+    exit()
     if is_debug:
         main_difference_former()
         main_difference_latter()
