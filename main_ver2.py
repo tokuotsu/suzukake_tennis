@@ -193,6 +193,8 @@ def main():
         print("Finished!")
         return
     else:
+        if getJST().hour >= 17:
+            bodies_list = bodies_list[1:]
         head_body1, head_body2 = make_body_week2(weekly_dict, is_difference=False)
     bodies_list.insert(0, head_body2)
     

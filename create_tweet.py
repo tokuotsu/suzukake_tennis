@@ -36,7 +36,7 @@ def tweet(text, contents):
         data, text, _, _, = client.create_tweet(text=content, in_reply_to_tweet_id=id)
         # ツリーにする
         id = data["id"]
-        time.sleep(2)
+        # time.sleep(2)
     print("tweeted")
 
 
