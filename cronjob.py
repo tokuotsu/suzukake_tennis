@@ -1,5 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from main import main_difference_former, main_former, main_latter, main_difference_latter
+from old.main import main_difference_former, main_former, main_latter, main_difference_latter
 from main_ver2 import main, main_difference
 from create_tweet import tweet
 
