@@ -60,7 +60,7 @@ def make_body_day(search_date, now_date, dictionary, type_season):
     now_date = now_date.strftime("%m/%d %H:%M:%S")
     search_date_str1 = search_date.strftime("%m/%d") + f"({num2youbi(search_date.strftime('%w'))})"
 
-    body = f"{search_date_str1}\n{'='*7} |  A  |  B  |  C  |\n"
+    body = f"{search_date_str1}\n{'='*7} |  A  |  B  |  C|\n"
     for key, value in dictionary.items():
         # value = np.array(value)
         # 100で割った余りが0なら×、それ以外は全て○
@@ -83,9 +83,9 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 def make_body_week2(weekly_dict, is_difference):
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
-        body = f"【更新 1/2】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
+        body = f"【更新 1/2】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C|\n"
     else:
-        body = f"【定期 1/2】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
+        body = f"【定期 1/2】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C|\n"
     body1 = body
     body2 = body.replace(" 1/2】", " 2/2】").replace(f"{now_date}現在の残り面数\n", "")
     num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
