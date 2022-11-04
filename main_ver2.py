@@ -20,11 +20,13 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 # デプロイ時にFalseにすることを絶対忘れない！
-is_debug = False
+is_debug = True
 
 if is_debug:
     print("デバッグ開始")
     print("この後デプロイする場合、デバッグ中にis_debug = Falseに変更！")
+    if os.path.exists("zenkai.txt"):
+        os.remove("zenkai.txt")
 else:
     print("デプロイ環境！")
 
@@ -128,7 +130,7 @@ def scraping(is_former=True, is_difference=False):
             df_str["12:15 -"]="teacher_only"
             # a = np.where(np.array(df_str)=="teacher_only", a+100, a)
             if season == "夏時間":
-                key_season = "summer_weekday"
+                key_season = "summer_wey_tmpeekday"
             else: # 冬
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
@@ -137,16 +139,17 @@ def scraping(is_former=True, is_difference=False):
                 df = df.drop(columns=["17:00 -"], index=3)
                 key_season = "summer_holiday"
             else: # 冬
-                # 16:00-とz面は最初に除く
-                df = df.drop(columns=["16:00 -"], index=3)
+                # 7:00-と16:00-とz面は最初に除く
+                df = df.drop(columns=["7:00 -", "16:00 -"], index=3)
                 key_season = "winter_holiday"
             # 土日祝日はBコートの予約が取れないため
             # ここでは、100を足している。
             # 後の処理で、変更があった場合は10を足しており、100で割ったあまりや10で割った余りに応じて表示を変える
             a = np.where(np.array(df.isna()), 1, 0)
             df_str = df.copy()
-            # B面の行は1
-            df_str.iloc[1,:]="teacher_only"
+            # 土日のB面の行は1、平日は予約できるっぽい
+            if search_date.weekday() >= 5:
+                df_str.iloc[1,:]="teacher_only"
         a = np.where(np.array(df_str)=="teacher_only", a+100, a)
         
         new_dict = defaultdict(list)

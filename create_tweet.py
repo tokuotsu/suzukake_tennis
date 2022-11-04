@@ -81,6 +81,7 @@ def make_body_day(search_date, now_date, dictionary, type_season):
 
 
 def make_body_week2(weekly_dict, is_difference):
+    print("make_body_week2 started...")
     now_date = getJST().strftime("%m/%d %H:%M")  
     if is_difference:
         body = f"【更新 1/2】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C|\n"
@@ -103,16 +104,18 @@ def make_body_week2(weekly_dict, is_difference):
                 sum_list[j] = str(sum_li%10) + "*"
             else:
                 sum_list[j] = str(sum_li%100)
-            # 100以上なら、土日祝教員用のためカッコをつける
+            # 101なら何らかの理由で予約できない日、400以上なら土日祝教員用のためカッコをつける(最低4つあるため)
             if sum_li >= 400:
                 sum_list[j] = f"({sum_list[j]})"
+            elif max(sum_li - 101, -1) % 10 == 0:
+                sum_list[j] = f"({sum_list[j]})"
             else:
-                if j == 1:
-                    sum_list[j] = f" {sum_list[j]} "
+                # if j == 1: # 真ん中の列
+                sum_list[j] = f" {sum_list[j]} "
         if is_former:
-            body1 += f"{num_list[i]}{key} | {' | '.join(sum_list)} |\n"
+            body1 += f"{num_list[i]}{key}  {'|'.join(sum_list)}\n"
         else:
-            body2 += f"{num_list[i]}{key} | {' | '.join(sum_list)} |\n"
+            body2 += f"{num_list[i]}{key}  {'|'.join(sum_list)}\n"
 
     if is_difference:
         body2 += "\n※* は変更分"
@@ -120,8 +123,8 @@ def make_body_week2(weekly_dict, is_difference):
         if not is_former:
             body2 += "\n※詳細はツリーへ"
 
-    body1 = body1.replace("|", "")
-    body2 = body2.replace("|", "")
+    body1 = body1.replace("|", " ")
+    body2 = body2.replace("|", " ")
     print(body1)
     print(body2)
     return body1, body2
@@ -236,53 +239,53 @@ if __name__=="__main__":
 
 
 # 1週間分の空きコート数の作成（先頭のツイート）
-def make_body_week(weekly_dict, is_difference, is_former):
-    now_date = getJST().strftime("%m/%d %H:%M")  
-    if is_difference:
-        body = f"【更新】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
-    else:
-        body = f"【定期】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
-    num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
-    for h, (key, value) in enumerate(weekly_dict.items()):       
-        value = np.array(value)
-        # 縦方向に足し算
-        sum_list = list(map(int, value.sum(axis=0)))
-        # 変更があったものについては、*をつける
-        for i, sum_li in enumerate(sum_list):
-            # 100で割った余りが10以上なら変更がある
-            if sum_li%100 >= 10:
-                sum_list[i] = str(sum_li%10) + "*"
-            else:
-                sum_list[i] = str(sum_li%100)
-            # 100以上なら、土日祝教員用のためカッコをつける
-            if sum_li >= 400:
-                sum_list[i] = f"({sum_list[i]})"
-            else:
-                if i == 1:
-                    sum_list[i] = f" {sum_list[i]} "
-        if getJST().hour < 17:
-            if is_former:
-                j = h
-            else:
-                j = h + 8
-        else:
-            if is_former:
-                j = h + 1
-            else:
-                j = h + 8
-        body += f"{num_list[j]}{key} | {' | '.join(sum_list)} |\n"
-    # body += f"\n{now_date} 現在"
-    # if getJST().hour < 17 and (not is_former):
-    #     body = body.replace("|", "")
-    #     print(body)
-    #     return body
-    # else:
-    if is_difference:
-        body += "\n※* は変更分"
-    else:
-        body += "\n※詳細はツリーへ"
-        if getJST().hour < 17 and is_former:
-            body = body.replace("="*8, "="*7)
-    body = body.replace("|", "")
-    print(body)
-    return body
+# def make_body_week(weekly_dict, is_difference, is_former):
+#     now_date = getJST().strftime("%m/%d %H:%M")  
+#     if is_difference:
+#         body = f"【更新】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
+#     else:
+#         body = f"【定期】\n{now_date}現在の残り面数\n\n{'='*8} | A |  B  | C |\n"
+#     num_list = ["⓪", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭"]
+#     for h, (key, value) in enumerate(weekly_dict.items()):       
+#         value = np.array(value)
+#         # 縦方向に足し算
+#         sum_list = list(map(int, value.sum(axis=0)))
+#         # 変更があったものについては、*をつける
+#         for i, sum_li in enumerate(sum_list):
+#             # 100で割った余りが10以上なら変更がある
+#             if sum_li%100 >= 10:
+#                 sum_list[i] = str(sum_li%10) + "*"
+#             else:
+#                 sum_list[i] = str(sum_li%100)
+#             # 100以上なら、土日祝教員用のためカッコをつける
+#             if sum_li >= 400:
+#                 sum_list[i] = f"({sum_list[i]})"
+#             else:
+#                 if i == 1:
+#                     sum_list[i] = f" {sum_list[i]} "
+#         if getJST().hour < 17:
+#             if is_former:
+#                 j = h
+#             else:
+#                 j = h + 8
+#         else:
+#             if is_former:
+#                 j = h + 1
+#             else:
+#                 j = h + 8
+#         body += f"{num_list[j]}{key} | {' | '.join(sum_list)} |\n"
+#     # body += f"\n{now_date} 現在"
+#     # if getJST().hour < 17 and (not is_former):
+#     #     body = body.replace("|", "")
+#     #     print(body)
+#     #     return body
+#     # else:
+#     if is_difference:
+#         body += "\n※* は変更分"
+#     else:
+#         body += "\n※詳細はツリーへ"
+#         if getJST().hour < 17 and is_former:
+#             body = body.replace("="*8, "="*7)
+#     body = body.replace("|", "")
+#     print(body)
+#     return body
