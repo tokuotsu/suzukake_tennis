@@ -20,7 +20,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 # デプロイ時にFalseにすることを絶対忘れない！
-is_debug = True
+is_debug = False
 
 if is_debug:
     print("デバッグ開始")
