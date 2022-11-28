@@ -6,18 +6,19 @@ import time
 import copy
 import pickle
 import datetime
+from collections import defaultdict
+
 import numpy as np
 import pandas as pd
-from collections import defaultdict
-from property import DISPLAY_NAME
-from create_tweet import *
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+
+from property import DISPLAY_NAME
+from create_tweet import *
 
 # デプロイ時にFalseにすることを絶対忘れない！
 is_debug = False
