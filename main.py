@@ -26,8 +26,8 @@ is_debug = False
 if is_debug:
     print("デバッグ開始")
     print("この後デプロイする場合、デバッグ中にis_debug = Falseに変更！")
-    if os.path.exists("zenkai.txt"):
-        os.remove("zenkai.txt")
+    if os.path.exists("zenkai.pkl"):
+        os.remove("zenkai.pkl")
 else:
     print("デプロイ環境！")
 
@@ -131,7 +131,7 @@ def scraping(is_former=True, is_difference=False):
             df_str["12:15 -"]="teacher_only"
             # a = np.where(np.array(df_str)=="teacher_only", a+100, a)
             if season == "夏時間":
-                key_season = "summer_wey_tmpeekday"
+                key_season = "summer_weekday"
             else: # 冬
                 key_season = "winter_weekday"
         elif daytype == "土日祝":
@@ -173,12 +173,12 @@ def scraping(is_former=True, is_difference=False):
     if is_difference:
         weekly_dict_mask = copy.deepcopy(weekly_dict)
         # 過去データの読み込み
-        if not os.path.exists("./zenkai.txt"):
+        if not os.path.exists("./zenkai.pkl"):
             zenkai_dict = weekly_dict
-            with open("./zenkai.txt", "wb") as f:
+            with open("./zenkai.pkl", "wb") as f:
                 pickle.dump(zenkai_dict, f)
         else:
-            with open("./zenkai.txt", "rb") as f:
+            with open("./zenkai.pkl", "rb") as f:
                 zenkai_dict = pickle.load(f)
         # weekly_dict_mask_forchangeは少ないdict
         weekly_dict_mask, bodies_list = detect_difference2(weekly_dict, weekly_dict_mask, zenkai_dict, bodies_list)
@@ -235,14 +235,7 @@ def test():
     tweet(f"test at {now_jst.strftime('%H:%M')}", [])
 
 if __name__=="__main__":
-    # scraping()
-    # main_former()
-    # main_latter()
-    # main_difference_former()
-    # main_difference_latter()
-    # exit()
     if is_debug:
         main()
         main_difference()
         pass
-    # main_latter()
