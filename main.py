@@ -151,6 +151,7 @@ def scraping(is_former=True, is_difference=False):
             # 土日のB面の行は1、平日は予約できるっぽい
             # if search_date.weekday() >= 5:
             #     df_str.iloc[1,:]="teacher_only"
+            df_str.iloc[1,:]="teacher_only"
         a = np.where(np.array(df_str)=="teacher_only", a+100, a)
         
         new_dict = defaultdict(list)
