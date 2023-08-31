@@ -90,11 +90,11 @@ def scraping(is_former=True, is_difference=False):
     print("logged in!")
 
     # 教務webシステム
-    url = "https://kyomu2.gakumu.titech.ac.jp/Titech/Default.aspx"
+    url = "https://kyomu0.gakumu.titech.ac.jp/Titech/Default.aspx"
     driver.get(url)
 
     # 施設予約
-    url = "https://kyomu2.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx"
+    url = "https://kyomu0.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx"
     driver.get(url)
 
     # コート
@@ -109,7 +109,7 @@ def scraping(is_former=True, is_difference=False):
         today = getJST()
         search_date = today + datetime.timedelta(days=i)
         search_date_str = search_date.strftime('%Y%m%d')
-        url = f"https://kyomu2.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx?date={search_date_str}&bs=5&nofilter=1&m=d"
+        url = f"https://kyomu0.gakumu.titech.ac.jp/Titech/Common/FacilityReservation/Top.aspx?date={search_date_str}&bs=5&m=d"
         driver.get(url)
         time.sleep(2.5)
 
