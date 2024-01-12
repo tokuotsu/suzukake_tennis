@@ -71,9 +71,9 @@ def scraping(is_former=True, is_difference=False):
     WebDriverWait(driver, 15).until(EC.presence_of_all_elements_located)
     
     # マトリックス認証
-    coordinate1 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[4]/th[1]").text
-    coordinate2 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[5]/th[1]").text
-    coordinate3 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[6]/th[1]").text
+    coordinate1 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[5]/th[1]").text
+    coordinate2 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[6]/th[1]").text
+    coordinate3 = driver.find_element(By.XPATH, "//*[@id='authentication']/tbody/tr[7]/th[1]").text
     alpha = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
     loc1 = [alpha.index(coordinate1[1]), int(coordinate1[3])-1]
     loc2 = [alpha.index(coordinate2[1]), int(coordinate2[3])-1]
